@@ -1,126 +1,44 @@
-import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
-import { useEffect, useState, useRef } from "react";
-import Knight from "../src/assets/Knight.gif";
+import React from "react";
 
-export default function CodingProfiles() {
-  const [isVisible, setIsVisible] = useState(false);
-  const cpRef = useRef(null);
-  const [responseData, setResponseData] = useState(null);
-  const [badgesData, setBadgesData] = useState(null);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch("http://localhost:3000/unm0l/solved");
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        const data = await response.json();
-        setResponseData(data);
-      } catch (error) {
-        console.error("Error fetching solved data:", error);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch("http://localhost:3000/unm0l/badges");
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        const data = await response.json();
-        setBadgesData(data);
-      } catch (error) {
-        console.error("Error fetching solved data:", error);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setIsVisible(true);
-          } else {
-            setIsVisible(false);
-          }
-        });
-      },
-      { threshold: 0.1 }
-    );
-
-    if (cpRef.current) {
-      observer.observe(cpRef.current);
-    }
-
-    return () => {
-      if (cpRef.current) {
-        observer.unobserve(cpRef.current);
-      }
-    };
-  }, []);
+const CodingProfiles = () => {
+  const profiles = [
+    {
+      name: "Codeforces",
+      image: "codeforces.png", // Replace with actual image path
+      description: "Specialist(1559) on Codeforces",
+    },
+    {
+      name: "CodeChef",
+      image: "codechef.png", // Replace with actual image path
+      description: "4*(1949) on CodeChef",
+    },
+    {
+      name: "LeetCode",
+      image: "leetcode.png", // Replace with actual image path
+      description: "Knight(2123) on LeetCode",
+    },
+  ];
 
   return (
-    <div
-      ref={cpRef}
-      className={`h-screen justify-center items-center flex flex-col ${
-        isVisible ? "scale-100" : "scale-0"
-      } transition-transform duration-1000`}
-    >
-      {responseData && (
-        <div className="flex items-center gap-2 justify-between md:flex-row flex-col">
-          <div className="text-2xl font-medium bg-red-500 px-3 py-1 rounded-lg">
-            Total Solved- {responseData.solvedProblem}
-          </div>
-          <PieChart width={300} height={300}>
-            <Pie
-              data={[
-                { name: "Easy", value: responseData.easySolved },
-                { name: "Medium", value: responseData.mediumSolved },
-                { name: "Hard", value: responseData.hardSolved },
-              ]}
-              cx="50%"
-              cy="50%"
-              outerRadius={100}
-              fill="#8884d8"
-              label
-              dataKey="value"
-            >
-              <Cell fill="#1b4004" />
-              <Cell fill="#918407" />
-              <Cell fill="#961206" />
-            </Pie>
-            <Tooltip />
-            <Legend />
-          </PieChart>
+    <section className="flex justify-center items-center min-h-screen p-5">
+      <div className="max-w-5xl w-full">
+        <h2 className="text-2xl font-bold mb-5 text-center">Coding Profiles</h2>
+        <div className="grid gap-5 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+          {profiles.map((profile, index) => (
+            <div key={index} className="bg-gray-800 p-4 rounded shadow">
+              <h3 className="text-xl font-bold mb-3">{profile.name}</h3>
+              <img
+                src={profile.image}
+                alt={profile.name}
+                className="w-full h-40 object-cover mb-3 rounded"
+              />
+              <p className="text-gray-400">{profile.description}</p>
+            </div>
+          ))}
         </div>
-      )}
-      {/* <div className="h-full flex">
-        {badgesData && (
-          <div className="flex">
-            {badgesData.badges.map((item, index) => (
-              <div key={index}>
-                <img
-                  src={
-                    item.icon[0] === "/"
-                      ? "https://assets.leetcode.com" + item.icon
-                      : item.icon
-                  }
-                  alt={"https://leetcode.com" + item.icon}
-                  className="h-1/4"
-                />
-              </div>
-            ))}
-          </div>
-        )}
-      </div> */}
-    </div>
+      </div>
+    </section>
   );
-}
+};
+
+export default CodingProfiles;
